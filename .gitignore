@@ -127,3 +127,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+matrix2.py
+.gitignore
