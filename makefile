@@ -8,4 +8,4 @@ compile:
 	${CC} ${CFLAGS} -o matrix matrix.cpp -lpapi
 
 clean:	
-	@rm -f matrix
+	@rm -f matrix Matrix.class

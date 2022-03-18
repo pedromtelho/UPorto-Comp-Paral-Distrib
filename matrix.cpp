@@ -77,7 +77,6 @@ void OnMultLine(int m_ar, int m_br)
     SYSTEMTIME Time1, Time2;
 
     char st[100];
-    double temp;
     int i, j, k;
 
     double *pha, *phb, *phc;
@@ -136,7 +135,6 @@ void OnMultBlock(int m_ar, int m_br, int bkSize)
     SYSTEMTIME Time1, Time2;
 
     char st[100];
-    double temp;
     int i, j, k;
 
     double *pha, *phb, *phc;
@@ -159,20 +157,21 @@ void OnMultBlock(int m_ar, int m_br, int bkSize)
 
     Time1 = clock();
 
-    for (i = 0; i < m_ar; i += bkSize)
+    for (int bi = 0; bi < m_ar; bi += bkSize)
     {
-        for (j = 0; j < m_br; j += bkSize)
+        for (int bj = 0; bj < m_br; bj += bkSize)
         {
-            for (int bi = i; bi < i+bkSize; bi++)
+            for (int bk = 0; bk < m_ar; bk += bkSize)
             {
-                for (int bj = j; bj < j+bkSize; bj++)
+                for (i = 0; i < bkSize; i++)
                 {
-                    temp = 0;
-                    for (k = 0; k < m_ar; k++)
+                    for (j = 0; j < bkSize; j++)
                     {
-                        temp += pha[bj * m_ar + k] * phb[k * m_br + bi];
+                        for (k = 0; k < bkSize; k++)
+                        {
+                            phc[(bi+i)*m_ar+bj+j] += pha[(bi+i)*m_ar+bk+k] * phb[(bk+k)*m_ar+bj+j];
+                        }
                     }
-                    phc[bj * m_ar + bi] = temp;
                 }
             }
         }
@@ -221,7 +220,6 @@ void init_papi()
 int main(int argc, char *argv[])
 {
 
-    char c;
     int lin, col, blockSize;
     int op;
 
