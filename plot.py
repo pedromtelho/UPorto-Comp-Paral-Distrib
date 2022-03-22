@@ -131,16 +131,16 @@ with open(loadPath + 'javaTimes2.pkl', 'rb') as f:
 with open(loadPath + 'sizes2.pkl', 'rb') as f:
     sizes2 = pickle.load(f)
 
-with open(loadPath + 'cTimes22.pkl', 'rb') as f:
-    cTimes22 = pickle.load(f)
+# with open(loadPath + 'cTimes22.pkl', 'rb') as f:
+#     cTimes22 = pickle.load(f)
 
-with open(loadPath + 'cTimes3.pkl', 'rb') as f:
-    cTimes3 = pickle.load(f)
+# with open(loadPath + 'cTimes3.pkl', 'rb') as f:
+#     cTimes3 = pickle.load(f)
 
 print(sizes)
 print(sizes2)
 print(cTimes1)
-print(cTimes3)
+# print(cTimes3)
 
 # -------------------------- Exercise 1/2 ------------------------------
 plotAndSave(sizes, [cTimes1, javaTimes1],
