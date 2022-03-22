@@ -163,13 +163,14 @@ void OnMultBlock(int m_ar, int m_br, int bkSize)
         {
             for (int bk = 0; bk < m_ar; bk += bkSize)
             {
+                // Line mult
                 for (i = 0; i < bkSize; i++)
                 {
-                    for (j = 0; j < bkSize; j++)
+                    for (k = 0; k < bkSize; k++)
                     {
-                        for (k = 0; k < bkSize; k++)
+                        for (j = 0; j < bkSize; j++)
                         {
-                            phc[(bi+i)*m_ar+bj+j] += pha[(bi+i)*m_ar+bk+k] * phb[(bk+k)*m_ar+bj+j];
+                            phc[(bi + i) * m_ar + bj + j] += pha[(bi + i) * m_ar + bk + k] * phb[(bk + k) * m_ar + bj + j];
                         }
                     }
                 }
