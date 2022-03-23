@@ -79,10 +79,10 @@ print(cTimes1L2)
 # print(cTimes3)
 
 # -------------------------- Exercise 1/2 ------------------------------
-plotAndSave(sizes, [cTimes1, javaTimes1],
+plotAndSave(sizes, [javaTimes1, cTimes1],
             ['Java', 'C++'], 'Exercise 1', savePath+'ex1.png')
 
-plotAndSave(sizes, [cTimes2, javaTimes2],
+plotAndSave(sizes, [javaTimes2, cTimes2],
             ['Java', 'C++'], 'Exercise 2', savePath+'ex2.png')
 
 plotAndSave(sizes, [javaTimes1, javaTimes2],
