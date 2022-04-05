@@ -5,12 +5,13 @@
 #include <cstdlib>
 #include <string.h>
 #include <papi.h>
+#include <omp.h>
 
 using namespace std;
 
 #define SYSTEMTIME clock_t
 
-void OnMult(int m_ar, int m_br)
+void OnMult(int m_ar, int m_br, int flag_parallel)
 {
 
     SYSTEMTIME Time1, Time2;
@@ -38,20 +39,46 @@ void OnMult(int m_ar, int m_br)
             phb[i * m_br + j] = (double)(i + 1);
 
     Time1 = clock();
-
-    for (i = 0; i < m_ar; i++)
-    {
-        for (j = 0; j < m_br; j++)
+    time_t seconds;
+    seconds=time(NULL);
+    if(flag_parallel){
+        #pragma omp parallel private(i, j)
+        for (i = 0; i < m_ar; i++)
         {
-            temp = 0;
-            for (k = 0; k < m_ar; k++)
+            for (j = 0; j < m_br; j++)
             {
-                temp += pha[i * m_ar + k] * phb[k * m_br + j];
+                #pragma omp single
+                temp = 0;
+                #pragma omp for reduction(+:temp)
+                for (k = 0; k < m_ar; k++)
+                {
+                    temp += pha[i * m_ar + k] * phb[k * m_br + j];
+                }
+                #pragma omp single
+                phc[i * m_ar + j] = temp;
             }
-            phc[i * m_ar + j] = temp;
+        } 
+
+    }
+
+    else{
+        for (i = 0; i < m_ar; i++)
+        {
+            for (j = 0; j < m_br; j++)
+            {
+                temp = 0;
+                for (k = 0; k < m_ar; k++)
+                {
+                    temp += pha[i * m_ar + k] * phb[k * m_br + j];
+                }
+                phc[i * m_ar + j] = temp;
+            }
         }
     }
 
+    time_t seconds2;
+    seconds2=time(NULL);
+    printf("Time2: %ld \n", seconds2-seconds);
     Time2 = clock();
     sprintf(st, "Time: %3.3f seconds\n", (double)(Time2 - Time1) / CLOCKS_PER_SEC);
     cout << st;
@@ -71,7 +98,7 @@ void OnMult(int m_ar, int m_br)
 }
 
 // add code here for line x line matriz multiplication
-void OnMultLine(int m_ar, int m_br)
+void OnMultLine(int m_ar, int m_br, int flag_parallel)
 {
 
     SYSTEMTIME Time1, Time2;
@@ -103,6 +130,7 @@ void OnMultLine(int m_ar, int m_br)
     {
         for (k = 0; k < m_ar; k++)
         {
+#pragma omp parallel for
             for (j = 0; j < m_br; j++)
             {
                 phc[i * m_ar + j] += pha[i * m_ar + k] * phb[k * m_br + j];
@@ -129,7 +157,7 @@ void OnMultLine(int m_ar, int m_br)
 }
 
 // add code here for block x block matriz multiplication
-void OnMultBlock(int m_ar, int m_br, int bkSize)
+void OnMultBlock(int m_ar, int m_br, int bkSize, int flag_parallel)
 {
 
     SYSTEMTIME Time1, Time2;
@@ -221,7 +249,7 @@ void init_papi()
 int main(int argc, char *argv[])
 {
 
-    int lin, col, blockSize;
+    int lin, col, blockSize, isParallel;
     int op;
 
     int EventSet = PAPI_NULL;
@@ -258,6 +286,9 @@ int main(int argc, char *argv[])
         printf("Dimensions: lins=cols ? ");
         cin >> lin;
         col = lin;
+        
+        printf("Is parallel (0 or 1): ");
+        cin >> isParallel;
 
         // Start counting
         ret = PAPI_start(EventSet);
@@ -267,15 +298,15 @@ int main(int argc, char *argv[])
         switch (op)
         {
         case 1:
-            OnMult(lin, col);
+            OnMult(lin, col, isParallel);
             break;
         case 2:
-            OnMultLine(lin, col);
+            OnMultLine(lin, col, isParallel);
             break;
         case 3:
             cout << "Block Size? ";
             cin >> blockSize;
-            OnMultBlock(lin, col, blockSize);
+            OnMultBlock(lin, col, blockSize, isParallel);
             break;
         }
 
